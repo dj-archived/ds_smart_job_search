@@ -6,10 +6,8 @@ A short description of the project.
 
 
 ## Usage
-If you are on Linux and you have [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) installed you can run the script `utility/setup_virtualenv_and_repo.sh` to:
-
-- create a python virtual environment and activate it
-- install all project dependencies from `requirements.txt`
+- create a python conda environment using job.yml
+- activate the environment
 - create a git repository
 - create your `Initial commit`
 
@@ -17,14 +15,8 @@ Here is how you run the script:
 
 ```shell
 cd ds_smart_job_search
-# mind the dot!
-. utility/setup_virtualenv_and_repo.sh
 ```
-
-Then you will need to create an `.env` file where to store your environment variables (SECRET key, plotly credentials, API keys, etc). Do NOT TRACK this `.env` file. See `.env.example`.
-
 Run all tests with a simple:
-
 ```
 pytest -v
 ```
@@ -42,6 +34,7 @@ python app.py
 To format all python files, run:
 
 ```shell
+pip install black
 black .
 ```
 
