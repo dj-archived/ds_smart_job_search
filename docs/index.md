@@ -32,6 +32,9 @@ job$ pip install -r requirements.txt
 
 # Export my environment dependencies to a yml file
 conda env export > job.yml
+
+# Pin the dependencies in requirements.txt
+pip freeze > requirements.txt
 ```
 
 <br>
