@@ -36,10 +36,24 @@ conda env export > job.yml
 # Pin the dependencies in requirements.txt
 pip freeze > requirements.txt
 
-# Rename app.py as app_template.py and create my app file app.py
+# Rename app.py as app_template.py
+# Create my app file app.py based on the app_template.py
+
+
+# Install some packages
+conda install dash dash-core-components dash-html-components dash-renderer -c conda-forge
+
+
+
 ```
 
 <br>
+
+### 2. Add data in my Dash app
+
+```
+
+```
 
 ---  
 

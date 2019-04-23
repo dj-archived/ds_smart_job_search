@@ -1,14 +1,23 @@
-import os
+import dash
+import dash_table
+from dash import Dash
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
+
+
+
 import plotly.plotly as py
 import plotly.graph_objs as go
 from flask import Flask
-from dash import Dash
-from dash.dependencies import Input, Output, State
+import os
+import pandas as pd
+
 from dotenv import load_dotenv
 from exceptions import ImproperlyConfigured
 
+pd.set_option('display.max_columns', None)
+################################################################################
 if "DYNO" in os.environ:
     # the app is on Heroku
     debug = False
@@ -19,9 +28,8 @@ else:
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
     load_dotenv(dotenv_path)
 
-app_name = "ds_smart_job_search"
+app_name = "AI Job Search"
 server = Flask(app_name)
-
 app = Dash(name=app_name, server=server, csrf_protect=False)
 
 external_js = []
@@ -34,43 +42,84 @@ external_css = [
 ]
 
 theme = {"font-family": "Lobster", "background-color": "#e0e0e0"}
+################################################################################
+# Read data
+df =pd.read_csv('./data/Global-Artificial-Intelligence-Database-Asgard-2018.csv',encoding = "ISO-8859-1")
 
+#df = df.drop('Description', 1)
+# add index
+#df[' index'] = range(1, len(df) + 1)
 
+# Filter healthcare
+#df_health = df[df['Category'].str.contains("Health")]
+df_health = df.loc[df.Category.str.contains('Health', na=False)]
+
+#df_health.to_csv('./data/df_health.csv')
+################################################################################
 def create_header():
     header_style = {"background-color": theme["background-color"], "padding": "1.5rem"}
     header = html.Header(html.H1(children=app_name, style=header_style))
     return header
-
-
+#########################
 def create_content():
     content = html.Div(
         children=[
-            html.Hr(),
+            html.H2("Global AI companies"),
             html.Div(
                 children=[
-                    dcc.Graph(
-                        id="graph-0",
-                        figure={
-                            "data": [
-                                {
-                                    "x": [1, 2, 3],
-                                    "y": [4, 1, 2],
-                                    "type": "bar",
-                                    "name": "SF",
-                                },
-                                {
-                                    "x": [1, 2, 3],
-                                    "y": [2, 4, 5],
-                                    "type": "bar",
-                                    "name": u"Montréal",
-                                },
-                            ],
-                            "layout": {"title": "Dash Data Visualization"},
-                        },
-                    )
-                ],
-                className="row",
-                style={"margin-bottom": 20},
+                    dash_table.DataTable(
+                        id='datatable-interactivity',
+                        columns=[{"name": i, "id": i, "deletable": True} for i in df.columns],
+                        data=df.to_dict("rows"),
+                        editable=True,
+                        filtering=True,
+                        sorting=True,
+                        sorting_type="multi",
+                        row_selectable="multi",
+                        row_deletable=True,
+                        selected_rows=[],
+                        style_cell={'textAlign': 'left'},
+                        style_as_list_view=False,
+                        style_cell_conditional=[{'if': {'row_index': 'odd'},
+                             'backgroundColor': 'rgb(248, 248, 248)'}],
+                        style_header={'backgroundColor': 'white',
+                        'fontWeight': 'bold'},
+                        pagination_mode="fe",
+                        pagination_settings={
+                            "displayed_pages": 1,
+                            "current_page": 0,
+                            "page_size": 20},
+                        navigation="page"),
+                ]
+            ),
+            html.Hr(),
+            html.H2("Health AI companies"),
+            html.Div(
+                children=[
+                    dash_table.DataTable(
+                        id='datatable-interactivity2',
+                        columns=[{"name": i, "id": i, "deletable": True} for i in df_health.columns],
+                        data=df.to_dict("rows"),
+                        editable=True,
+                        filtering=True,
+                        sorting=True,
+                        sorting_type="multi",
+                        row_selectable="multi",
+                        row_deletable=True,
+                        selected_rows=[],
+                        style_cell={'textAlign': 'left'},
+                        style_as_list_view=False,
+                        style_cell_conditional=[{'if': {'row_index': 'odd'},
+                             'backgroundColor': 'rgb(248, 248, 248)'}],
+                        style_header={'backgroundColor': 'white',
+                        'fontWeight': 'bold'},
+                        pagination_mode="fe",
+                        pagination_settings={
+                            "displayed_pages": 1,
+                            "current_page": 0,
+                            "page_size": 20},
+                        navigation="page"),
+                ]
             ),
             html.Div(
                 children=[
@@ -107,7 +156,7 @@ def create_content():
     )
     return content
 
-
+#########################
 def create_footer():
     footer_style = {"background-color": theme["background-color"], "padding": "0.5rem"}
     p0 = html.P(
@@ -128,21 +177,12 @@ def create_footer():
             ),
         ]
     )
-    """
-    a_fa = html.A(
-        children=[
-            html.I([], className='fa fa-font-awesome fa-2x'), html.Span('Font Awesome')
-        ],
-        style={'text-decoration': 'none'},
-        href='http://fontawesome.io/',
-        target='_blank',
-    )
-   """
+
     div = html.Div([p0, p1])  # , a_fa
     footer = html.Footer(children=div, style=footer_style)
     return footer
 
-
+#########################
 def serve_layout():
     layout = html.Div(
         children=[create_header(), create_content(), create_footer()],
@@ -152,6 +192,8 @@ def serve_layout():
     return layout
 
 
+# TODO: callbacks
+################################################################################
 app.layout = serve_layout
 for js in external_js:
     app.scripts.append_script({"external_url": js})
@@ -159,7 +201,6 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 
 
-# TODO: callbacks
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
