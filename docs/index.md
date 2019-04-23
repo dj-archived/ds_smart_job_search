@@ -11,22 +11,27 @@ title: Smart Job Search
 ### 1. Download Cookie Cutter Dash app template
 
 ```
+# Download cookie Cutter Dash app template
 $ pip install cookiecutter
 $ cookiecutter https://github.com/jackdbd/cookiecutter-dash
 
-# Install virtualenvwrapper
-$ pip install virtualenvwrapper
 
-# Create an environment
-$ cd ds_smart_job_search
-$ . utility/setup_virtualenv_and_repo.sh
-
-
-
-# Add docs/ and src/data/ directories
+# Add directories
+mkdir src
 mkdir docs
-mkdir src/data
+rm -r utility
 
+# Create an environment named job
+$ conda create -n job python=3.7 anaconda
+
+# Activate my environment job
+conda activate job
+
+# Install packages in requirements.txt
+job$ pip install -r requirements.txt
+
+# Export my environment dependencies to a yml file
+conda env export > job.yml
 ```
 
 <br>
