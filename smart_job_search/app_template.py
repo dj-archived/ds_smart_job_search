@@ -8,10 +8,11 @@ from dash import Dash
 from dash.dependencies import Input, Output, State
 from dotenv import load_dotenv
 from exceptions import ImproperlyConfigured
-'''
+
+"""
 DOTENV_PATH = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(DOTENV_PATH)
-'''
+"""
 if "DYNO" in os.environ:
     # the app is on Heroku
     debug = False
@@ -21,20 +22,20 @@ else:
     debug = True
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
     load_dotenv(dotenv_path)
-'''
+"""
 try:
     py.sign_in(os.environ["PLOTLY_USERNAME"], os.environ["PLOTLY_API_KEY"])
 except KeyError:
     raise ImproperlyConfigured("Plotly credentials not set in .env")
-'''
+"""
 app_name = "ds_smart_job_search"
 server = Flask(app_name)
-'''
+"""
 try:
     server.secret_key = os.environ["SECRET_KEY"]
 except KeyError:
     raise ImproperlyConfigured("SECRET KEY not set in .env:")
-'''
+"""
 app = Dash(name=app_name, server=server, csrf_protect=False)
 
 external_js = []
@@ -88,7 +89,7 @@ def create_content():
                                     "x": [1, 2, 3],
                                     "y": [2, 4, 5],
                                     "type": "bar",
-                                    "name": u"Montréal",
+                                    "name": "Montréal",
                                 },
                             ],
                             "layout": {"title": "Dash Data Visualization"},
@@ -150,7 +151,8 @@ def create_footer():
     )
     a_fa = html.A(
         children=[
-            html.I([], className="fa fa-font-awesome fa-2x"), html.Span("Font Awesome")
+            html.I([], className="fa fa-font-awesome fa-2x"),
+            html.Span("Font Awesome"),
         ],
         style={"text-decoration": "none"},
         href="http://fontawesome.io/",
