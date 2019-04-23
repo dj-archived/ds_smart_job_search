@@ -8,7 +8,7 @@ title: Smart Job Search
 
 
 
-### 1. Download Cookie Cutter Dash app template
+### 1. Prepare my Dash app template
 
 ```
 # Download cookie Cutter Dash app template
@@ -35,6 +35,8 @@ conda env export > job.yml
 
 # Pin the dependencies in requirements.txt
 pip freeze > requirements.txt
+
+# Rename app.py as app_template.py and create my app file app.py
 ```
 
 <br>
