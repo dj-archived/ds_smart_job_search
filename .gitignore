@@ -19,3 +19,4 @@ tests/.cache/
 *.pyc
 
 *.draft.md
+*.local*
