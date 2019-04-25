@@ -51,7 +51,7 @@ conda install dash dash-core-components dash-html-components dash-renderer -c co
 
 <br>
 
-### 3. Connect to Glassdoor
+### 3. Connect to Indeed
 ```
 # Activate my conda virtual environment
 conda activate job
@@ -65,6 +65,7 @@ pip install lxml
 # Automate web browser interaction from Python
 pip install selenium
 
+# Check app/scrape_de.py
 ```  
 <br>
 
