@@ -28,6 +28,7 @@ Check that the virtual environment is activated, then run:
 ```shell
 cd app
 python app.py
+'''App is running locally:  http://127.0.0.1:5000''''
 ```
 
 ## Code formatting
