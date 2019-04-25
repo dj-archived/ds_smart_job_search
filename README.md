@@ -14,7 +14,7 @@ A short description of the project.
 Here is how you run the script:
 
 ```shell
-cd ds_smart_job_search
+cd app
 ```
 Run all tests with a simple:
 ```
@@ -26,7 +26,7 @@ pytest -v
 Check that the virtual environment is activated, then run:
 
 ```shell
-cd smart job search
+cd app
 python app.py
 ```
 
