@@ -21,6 +21,14 @@ Run all tests with a simple:
 pytest -v
 ```
 
+## Code formatting
+To format all python files, run:
+
+```shell
+pip install black
+black .
+```
+
 
 ## Run your Dash app
 Check that the virtual environment is activated, then run:
@@ -29,14 +37,6 @@ Check that the virtual environment is activated, then run:
 cd app
 python app.py
 # App is running locally:  http://127.0.0.1:5000
-```
-
-## Code formatting
-To format all python files, run:
-
-```shell
-pip install black
-black .
 ```
 
 ## Pin your dependencies
