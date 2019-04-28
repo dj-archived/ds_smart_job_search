@@ -14,7 +14,7 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 
 import flask
-from flask import Flask
+from flask import Flask, send_from_directory
 
 # Other
 import io
@@ -73,7 +73,7 @@ else:
     load_dotenv(dotenv_path)
 
 app_name = "AI Job Search"
-server = Flask(app_name)
+server = Flask(app_name, static_folder='static')
 app = Dash(name=app_name, server=server, csrf_protect=False)
 
 app.config.suppress_callback_exceptions = True
@@ -116,14 +116,18 @@ def get_data_object(user_selection):
 ################################################################################
 # Table 3 and 4
 de_encoding = find_encoding("./data/de_indeed.txt")
+us_encoding = find_encoding("./data/de_indeed.txt")
+
 
 df_indeed_de = pd.read_csv("./data/de_indeed.txt",sep="\t",encoding=de_encoding)
+df_indeed_us = pd.read_csv("./data/us_indeed.txt",sep="\t",encoding=us_encoding)
+
 df_indeed_de.insert(0, 'Index', range(1, len(df_indeed_de) + 1))
+df_indeed_us.insert(0, 'Index', range(1, len(df_indeed_us) + 1))
 print(df_indeed_de.head(2))
+print(df_indeed_us.head(2))
 
-dataframes_indeed = {'Germany': df_indeed_de
-
-}
+dataframes_indeed = {'Germany': df_indeed_de,'US':df_indeed_us}
 
 print(dataframes_indeed.keys())
 
@@ -312,6 +316,7 @@ def update_table(user_selection):
         print('Data is not selected yet')
 ################################################################################
 # Download table link
+#dataframes = {'Global AI Companies': df1,'Global Health AI Companies': df_health}
 @app.callback(
     dash.dependencies.Output('download-link', 'href'),
     [dash.dependencies.Input('table', 'rows')])
@@ -326,7 +331,7 @@ def update_download_link(rows):
     return txt_string
 ################################################################################
 ################################################################################
-# Display ds table
+# Display table 3 and 4
 @app.callback(
     dash.dependencies.Output('table_indeed', 'rows'), [dash.dependencies.Input('field-dropdown2', 'value')])
 def update_table2(user_selection2):
@@ -342,7 +347,7 @@ def update_table2(user_selection2):
         print('Indeed data is not selected yet')
 
 # Download table link
-
+#dataframes = {'Global AI Companies': df1,'Global Health AI Companies': df_health}
 @app.callback(
     dash.dependencies.Output('download-link2', 'href'),
     [dash.dependencies.Input('table_indeed', 'rows')])
@@ -366,6 +371,13 @@ def displayClick(n_clicks):
     else:
         msg = 'Download the latest data from Indeed'
     return html.Div(msg)
+############################################################################### # facicon
+@app.server.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(server.root_path, 'static'),
+    'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 # Run app
 ################################################################################
 if __name__ == "__main__":
