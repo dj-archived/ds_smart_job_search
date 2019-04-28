@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table_experiments as dt
-
+from dash_table_experiments import DataTable
 
 import plotly.plotly as py
 import plotly.graph_objs as go
@@ -13,10 +13,12 @@ from flask import Flask
 import os
 import pandas as pd
 
-from dotenv import load_dotenv
-from exceptions import ImproperlyConfigured
+
 
 pd.set_option("display.max_columns", None)
+
+from dotenv import load_dotenv
+from exceptions import ImproperlyConfigured
 ################################################################################
 if "DYNO" in os.environ:
     # the app is on Heroku
@@ -32,6 +34,10 @@ app_name = "AI Job Search"
 server = Flask(app_name)
 app = Dash(name=app_name, server=server, csrf_protect=False)
 
+#app.config.suppress_callback_exceptions = True
+
+#app.scripts.config.serve_locally=True
+
 external_js = []
 
 external_css = [
@@ -44,20 +50,24 @@ external_css = [
 theme = {"font-family": "Lobster", "background-color": "#e0e0e0"}
 ################################################################################
 # Read data
-# df =pd.read_csv('./data/Global-Artificial-Intelligence-Database-Asgard-2018.csv',encoding = "ISO-8859-1")
+# Table 1
+df1 = pd.read_csv("./data/Global-Artificial-Intelligence-Database-Asgard-2018.csv",encoding="ISO-8859-1")
+df1.insert(0, 'Index', range(1, len(df1) + 1))
+#df1['index'] = range(1, len(df1) + 1)
 
-# df = df.drop('Description', 1)
-# add index
-# df[' index'] = range(1, len(df) + 1)
 
-# Filter healthcare
-# df_health = df[df['Category'].str.contains("Health")]
-# df_health = df.loc[df.Category.str.contains('Health', na=False)]
+# Table 2
 df_health = pd.read_csv("./data/df_health.csv", encoding="ISO-8859-1")
+df_health.insert(0, 'Index', range(1, len(df_health) + 1))
 #####################################################################
-df1 = pd.read_csv("./data/de/Indeed_Germany.csv")
-df1.head(2)
-df1["Number"] = range(1, len(df1) + 1)
+dataframes = {'Global AI Companies': df1,'Global Health AI Companies': df_health}
+
+
+def get_data_object(user_selection):
+    """
+    For user selections, return the relevant in-memory data frame.
+    """
+    return dataframes[user_selection]
 
 #####################################################################
 # df_health.to_csv('./data/df_health.csv')
@@ -101,82 +111,32 @@ def create_content():
                 style={"margin-bottom": 20},
             ),
             html.Hr(),
-            html.H2("Health AI companies"),
+            html.H2("List of global AI companies"),
             html.Div(
                 children=[
-                    dash_table.DataTable(
-                        id="datatable-interactivity2",
-                        columns=[
-                            {"name": i, "id": i, "deletable": True}
-                            for i in df_health.columns
-                        ],
-                        data=df_health.to_dict("rows"),
-                        editable=True,
-                        filtering=True,
-                        sorting=True,
-                        sorting_type="multi",
-                        row_selectable="multi",
-                        row_deletable=True,
-                        selected_rows=[],
-                        style_cell={"textAlign": "left"},
-                        style_as_list_view=False,
-                        style_cell_conditional=[
-                            {
-                                "if": {"row_index": "odd"},
-                                "backgroundColor": "rgb(248, 248, 248)",
-                            }
-                        ],
-                        style_header={"backgroundColor": "white", "fontWeight": "bold"},
-                        pagination_mode="fe",
-                        pagination_settings={
-                            "displayed_pages": 1,
-                            "current_page": 0,
-                            "page_size": 20,
-                        },
-                        navigation="page",
-                    )
-                ]
-            ),
-            # 2. 2nd row: table
-            html.H2("Data Scientist Positions in Germany"),
-            html.Div(
-                children=[
-                    dash_table.DataTable(
-                        id="datatable-interactivity3",
-                        columns=[
-                            {"name": i, "id": i, "deletable": True} for i in df1.columns
-                        ],
-                        data=df1.to_dict("rows"),
-                        editable=True,
-                        filtering=True,
-                        sorting=True,
-                        sorting_type="multi",
-                        row_selectable="multi",
-                        row_deletable=True,
-                        selected_rows=[],
-                        style_cell={"textAlign": "left"},
-                        style_as_list_view=False,
-                        style_cell_conditional=[
-                            {
-                                "if": {"row_index": "odd"},
-                                "backgroundColor": "rgb(248, 248, 248)",
-                            }
-                        ],
-                        style_header={"backgroundColor": "white", "fontWeight": "bold"},
-                        pagination_mode="fe",
-                        pagination_settings={
-                            "displayed_pages": 1,
-                            "current_page": 0,
-                            "page_size": 20,
-                        },
-                        navigation="page",
-                    )
-                ]
-            ),
-        ],
-        id="content",
-        style={"width": "100%", "height": "100%"},
-    )
+
+                    dcc.Dropdown(
+                    id='field-dropdown',
+                    options=[{'label': df, 'value': df} for df in dataframes]),
+                    DataTable(
+                        id='table',
+                    # rows
+                        rows=[{}],
+                        #columns=df_health.columns,
+                        row_selectable=True,
+                        filterable=True,
+                        sortable=True,
+                        selected_row_indices=[],
+                        max_rows_in_viewport=10,
+                        resizable =True,
+                        enable_drag_and_drop=True,
+                        header_row_height=50,
+                        column_widths=200,
+                        row_scroll_timeout=1,
+                        row_update= True,
+                        editable =True)]),
+
+                    ])
     return content
 
 
@@ -193,10 +153,16 @@ def create_footer():
     )
     p1 = html.P(
         children=[
-            html.Span("Data from "),
+            html.Span("Global AI Company Data from "),
             html.A(
                 "https://asgard.vc/global-ai/",
                 href="https://some-website.com/",
+                target="_blank",
+            ),
+            html.Span("Job data from"),
+            html.A(
+                "https://de.indeed.com/",
+                href="https://de.indeed.com/",
                 target="_blank",
             ),
         ]
@@ -225,7 +191,14 @@ for js in external_js:
 for css in external_css:
     app.css.append_css({"external_url": css})
 
-
+@app.callback(Output('table', 'rows'), [Input('field-dropdown', 'value')])
+def update_table(user_selection):
+    """
+    For user selections, return the relevant table
+    """
+    df = get_data_object(user_selection)
+    return df.to_dict('records')
+    ß
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run_server(debug=debug, port=port, threaded=True)
+    app.run_server(port=port, threaded=True, debug=True) #debug=debug,

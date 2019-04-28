@@ -48,9 +48,11 @@ pip freeze > requirements.txt
 ## Deploy on Heroku
 Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a look at the [dash-heroku-template](https://github.com/plotly/dash-heroku-template)
 
-[Test App V1](https://smart-job-app.herokuapp.com/)
+[App V2](https://ai-companies.herokuapp.com/)
 
-
+---
 ## To Solve
-* Dash table functions
-* Integration
+ - [x] Dash table functionality
+ - [ ] Integration
+ - [ ] favicon
+ - [ ] Download
