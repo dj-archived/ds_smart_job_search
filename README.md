@@ -53,7 +53,7 @@ Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a lo
 ## App Screenshot  
  * [App V3](https://ai-companies.herokuapp.com/)  
 
-![ScreenShot](Screen_shot_smart-job-search.png)
+![ScreenShot](Screen_shot_app.png)
 ---
 ## To Solve
  - [x] Table functionality
