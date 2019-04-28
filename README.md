@@ -46,11 +46,13 @@ pip freeze > requirements.txt
 ```
 
 ## Deploy on Heroku
-Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a look at the [dash-heroku-template](https://github.com/plotly/dash-heroku-template)
+Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a look at the [dash-heroku-template](https://github.com/plotly/dash-heroku-template)  
 
-[App V3](https://ai-companies.herokuapp.com/)
+
 ---
-## App Screenshot
+## App Screenshot  
+ * [App V3](https://ai-companies.herokuapp.com/)  
+
 ![ScreenShot](Screen_shot_smart-job-search.png)
 ---
 ## To Solve
