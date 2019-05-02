@@ -60,5 +60,5 @@ Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a lo
  - [x] Download full table
  - [x] German and English Encoding
  - [x] favicon
- - [ ] Callback order
- - [ ] Integration
+ - [x] Callback order
+ - [x] Integration
