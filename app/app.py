@@ -34,6 +34,8 @@ from exceptions import ImproperlyConfigured
 
 import chardet
 
+import subprocess
+
 pd.set_option("display.max_columns", None)
 ###############################################################################
 def find_encoding(fname):
@@ -72,10 +74,10 @@ else:
     dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
     load_dotenv(dotenv_path)
 
-app_name = "AI Job Search"
+app_name = "Smart Job Search"
 server = Flask(app_name, static_folder='static')
 app = Dash(name=app_name, server=server, csrf_protect=False)
-
+app.title = 'Smart Job Search'
 app.config.suppress_callback_exceptions = True
 app.scripts.config.serve_locally=True
 
@@ -116,18 +118,14 @@ def get_data_object(user_selection):
 ################################################################################
 # Table 3 and 4
 de_encoding = find_encoding("./data/de_indeed.txt")
-us_encoding = find_encoding("./data/de_indeed.txt")
-
 
 df_indeed_de = pd.read_csv("./data/de_indeed.txt",sep="\t",encoding=de_encoding)
-df_indeed_us = pd.read_csv("./data/us_indeed.txt",sep="\t",encoding=us_encoding)
-
 df_indeed_de.insert(0, 'Index', range(1, len(df_indeed_de) + 1))
-df_indeed_us.insert(0, 'Index', range(1, len(df_indeed_us) + 1))
 print(df_indeed_de.head(2))
-print(df_indeed_us.head(2))
 
-dataframes_indeed = {'Germany': df_indeed_de,'US':df_indeed_us}
+dataframes_indeed = {'Germany': df_indeed_de
+
+}
 
 print(dataframes_indeed.keys())
 
@@ -146,7 +144,7 @@ def create_header():
     return header
 ################################################################################
 def create_content():
-    content = html.Div(
+    content = html.Div(id='ai',
         children=[
             html.H2("Global AI companies"),
             html.Div(
@@ -181,7 +179,8 @@ def create_content():
                 children=[
                     dcc.Dropdown(
                     id='field-dropdown',
-                    options=[{'label': df, 'value': df} for df in dataframes]),
+                    options=[{'label': df, 'value': df} for df in dataframes],
+                    value="Global AI Companies"),
                     DataTable(
                         id='table',
                     # rows
@@ -207,6 +206,11 @@ def create_content():
                 href="",
                 target="_blank"
             ),
+                    ])
+    return content
+def create_content2():
+    content = html.Div(
+        children=[
             html.Hr(),
             html.H2("Data Scientist Positions in Germany"),
             html.Div(
@@ -218,7 +222,8 @@ def create_content():
                 children=[
                     dcc.Dropdown(
                     id='field-dropdown2',
-                    options=[{'label': df, 'value': df} for df in dataframes_indeed]),
+                    options=[{'label': df, 'value': df} for df in dataframes_indeed],
+                    value="Germany"),
                     DataTable(
                         id='table_indeed',
                         rows=[{}],
@@ -244,7 +249,8 @@ def create_content():
                 target="_blank"
             ),
             html.Hr(),
-                    ])
+
+    ])
     return content
 ################################################################################
 # Footer
@@ -269,7 +275,7 @@ def create_footer():
                 target="_blank",
             ),
             html.H2(),
-            html.Span("Job data from"),
+            html.Span("Job data from "),
             html.A(
                 "https://de.indeed.com/",
                 href="https://de.indeed.com/",
@@ -285,7 +291,7 @@ def create_footer():
 # Layout
 def serve_layout():
     layout = html.Div(
-        children=[create_header(), create_content(), create_footer()],
+        children=[create_header(), create_content(), create_content2(), create_footer()],
         className="container",
         style={"font-family": theme["font-family"]},
     )
@@ -316,7 +322,6 @@ def update_table(user_selection):
         print('Data is not selected yet')
 ################################################################################
 # Download table link
-#dataframes = {'Global AI Companies': df1,'Global Health AI Companies': df_health}
 @app.callback(
     dash.dependencies.Output('download-link', 'href'),
     [dash.dependencies.Input('table', 'rows')])
@@ -331,7 +336,7 @@ def update_download_link(rows):
     return txt_string
 ################################################################################
 ################################################################################
-# Display table 3 and 4
+# Display ds table
 @app.callback(
     dash.dependencies.Output('table_indeed', 'rows'), [dash.dependencies.Input('field-dropdown2', 'value')])
 def update_table2(user_selection2):
@@ -347,7 +352,7 @@ def update_table2(user_selection2):
         print('Indeed data is not selected yet')
 
 # Download table link
-#dataframes = {'Global AI Companies': df1,'Global Health AI Companies': df_health}
+
 @app.callback(
     dash.dependencies.Output('download-link2', 'href'),
     [dash.dependencies.Input('table_indeed', 'rows')])
@@ -369,7 +374,12 @@ def displayClick(n_clicks):
     if n_clicks is None:
         msg ='Using pre-downloaded data from Indeed'
     else:
+        print('search indeed.de')
+        subprocess.call(" python scrape_de.py 1", shell=True)
+        print('finished searching')
+        #os.system('scrape_de.py 1')
         msg = 'Download the latest data from Indeed'
+
     return html.Div(msg)
 ############################################################################### # facicon
 @app.server.route('/favicon.ico')
@@ -378,7 +388,7 @@ def favicon():
     'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-# Run app
+
 ################################################################################
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
