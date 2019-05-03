@@ -3,55 +3,36 @@
 
 
 A short description of the project.
+---
+## 1. Use the app online
+ * [App V3](https://ai-companies.herokuapp.com/)  
 
+![ScreenShot](Screen_shot_app.png)
 
-## Usage
-- create a python conda environment using job.yml
-- activate the environment
-- create a git repository
-- create your `Initial commit`
-
-Here is how you run the script:
-
-```shell
-cd app
-```
-Run all tests with a simple:
-```
-pytest -v
-```
-
-## Code formatting
-To format all python files, run:
-
-```shell
-pip install black
-black .
-```
-
-
-## Run your Dash app
-Check that the virtual environment is activated, then run:
+---
+## 2. Make your personalized job serch app
+### Build your app in 15 minutes
 
 ```shell
 cd app
+
+# Modify scraping conditions
+vim scrape_de.py
+# Modify "url_de", "My_City", "max_results_my_city", and "page"
+
+# Web scarping
+python scrape_de.py
+
+# Run the app
 python app.py
-# App is running locally:  http://127.0.0.1:5000
+
+# Visit http://127.0.0.1:5000
 ```
 
-## Pin your dependencies
-
+### Pin your dependencies
 ```shell
 pip freeze > requirements.txt
 ```
 
-## Deploy on Heroku
+### Deploy on Heroku
 Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a look at the [dash-heroku-template](https://github.com/plotly/dash-heroku-template)  
-
-
----
-## App Screenshot  
- * [App V3](https://ai-companies.herokuapp.com/)  
-
-![ScreenShot](Screen_shot_app.png)
----
