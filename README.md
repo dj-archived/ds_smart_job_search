@@ -11,6 +11,7 @@ A short description of the project.
 ![ScreenShot](Screen_shot_app.png)
 
 ---
+
 ## 2. Make your personalized job search app
 ### Build your app
 
@@ -24,7 +25,7 @@ cd app
 vim scrape_de.py
 # Modify "url_de", "My_City", "max_results_my_city", and "page"
 
-# Web scarping
+# Web scrape from indeed.de
 python scrape_de.py
 
 # Run the app
@@ -41,6 +42,7 @@ pip freeze > requirements.txt
 ### Deploy on Heroku
 Follow the [Dash deployment guide](https://dash.plot.ly/deployment) or have a look at the [dash-heroku-template](https://github.com/plotly/dash-heroku-template)  
 
+---
 
 ## 3. Legality
  * Users may be subject to legal ramifications depending on where and how they attempt to scrape information.
